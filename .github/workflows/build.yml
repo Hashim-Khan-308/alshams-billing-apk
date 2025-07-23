@@ -24,10 +24,12 @@ jobs:
           sudo apt install -y zip unzip openjdk-11-jdk python3-pip \
             libgl1-mesa-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev \
             libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev \
-            libavcodec-dev zlib1g-dev libgstreamer1.0 libgstreamer1.0-dev \
+            libavcodec-dev zlib1g-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             libmtdev-dev
           pip install --upgrade pip
           pip install buildozer cython virtualenv
+
+
 
       - name: Rename main script
         run: mv "Al-Shams Billing.py" main.py
