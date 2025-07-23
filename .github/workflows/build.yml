@@ -2,8 +2,7 @@ name: build
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
@@ -22,27 +21,25 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y \
-            zip unzip git python3-pip \
-            openjdk-17-jdk \
+            zip unzip git python3-pip openjdk-17-jdk \
             libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
             libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
-            zlib1g-dev libgstreamer1.0 libmtdev-dev \
-            libgl1-mesa-dev libgles2-mesa-dev \
-            xclip xsel libjpeg-dev \
-            libffi-dev libssl-dev
+            zlib1g-dev libgstreamer1.0 libmtdev-dev libgl1-mesa-dev \
+            libgles2-mesa-dev xclip xsel libjpeg-dev libffi-dev libssl-dev
           pip install --upgrade pip
           pip install buildozer
 
-      - name: Install Android SDK Tools
+      - name: Install Android SDK and Accept Licenses
         run: |
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+          mkdir -p $HOME/.android && echo "### User Agreements accepted" > $HOME/.android/repositories.cfg
+          sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk \
+            "platform-tools" "build-tools;33.0.2" "platforms;android-33"
 
       - name: Build APK
         run: buildozer android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: alshams-billing-apk
           path: bin/*.apk
