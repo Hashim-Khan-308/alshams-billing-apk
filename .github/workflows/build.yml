@@ -2,7 +2,8 @@ name: Build Kivy APK
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
@@ -10,24 +11,25 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y \
-            zip unzip git python3-pip openjdk-17-jdk \
-            libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
-            libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
-            zlib1g-dev libgstreamer1.0 libmtdev-dev libgl1-mesa-dev \
-            libgles2-mesa-dev xclip xsel libjpeg-dev libffi-dev libssl-dev
+          sudo apt install -y zip unzip openjdk-11-jdk python3-pip \
+            libgl1-mesa-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev \
+            libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev \
+            libavcodec-dev zlib1g-dev libmtdev-dev \
+            libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+            gstreamer1.0-libav gstreamer1.0-tools ffmpeg
           pip install --upgrade pip
-          pip install buildozer cython
+          pip install buildozer cython virtualenv
 
       - name: Rename main script
         run: mv "Al-Shams Billing.py" main.py
@@ -38,7 +40,7 @@ jobs:
           buildozer android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4   # ✅ Fix: updated from @v3 to @v4
+        uses: actions/upload-artifact@v4
         with:
           name: AlShamsBillingApp
           path: bin/*.apk
