@@ -1,4 +1,4 @@
-name: build
+name: Build Kivy APK
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -27,19 +27,18 @@ jobs:
             zlib1g-dev libgstreamer1.0 libmtdev-dev libgl1-mesa-dev \
             libgles2-mesa-dev xclip xsel libjpeg-dev libffi-dev libssl-dev
           pip install --upgrade pip
-          pip install buildozer
+          pip install buildozer cython
 
-      - name: Install Android SDK and Accept Licenses
-        run: |
-          mkdir -p $HOME/.android && echo "### User Agreements accepted" > $HOME/.android/repositories.cfg
-          sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk \
-            "platform-tools" "build-tools;33.0.2" "platforms;android-33"
+      - name: Rename main script
+        run: mv "Al-Shams Billing.py" main.py
 
       - name: Build APK
-        run: buildozer android debug
+        run: |
+          buildozer init || true
+          buildozer android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4   # ✅ Fix: updated from @v3 to @v4
         with:
-          name: alshams-billing-apk
+          name: AlShamsBillingApp
           path: bin/*.apk
