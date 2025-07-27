@@ -27,9 +27,30 @@ jobs:
             libavcodec-dev zlib1g-dev libmtdev-dev \
             libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-            gstreamer1.0-libav gstreamer1.0-tools ffmpeg
+            gstreamer1.0-libav gstreamer1.0-tools ffmpeg curl
+
           pip install --upgrade pip
           pip install buildozer cython virtualenv
+
+      - name: Install Android SDK
+        run: |
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip sdk-tools.zip -d $HOME/android-sdk/cmdline-tools
+          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+
+      - name: Set environment variables
+        run: |
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install SDK Build Tools
+        run: |
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
       - name: Rename main script
         run: mv "Al-Shams Billing.py" main.py
